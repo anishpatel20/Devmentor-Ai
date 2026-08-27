@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getHealth } from "./services/api";
+import { getHealth } from "./services/auth";
 
 function App() {
   const [health, setHealth] = useState(null);

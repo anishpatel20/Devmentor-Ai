@@ -1,11 +1,14 @@
-const API_URL = import.meta.env.VITE_API_URL;
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+  withCredentials: true,
+});
 
 export const getHealth = async () => {
-  const response = await fetch(`${API_URL}/api/health`);
+  const response = await api.get("/api/health");
 
-  if (!response.ok) {
-    throw new Error("Backend request failed");
-  }
-
-  return response.json();
+  return response.data;
 };
+
+export default api;
