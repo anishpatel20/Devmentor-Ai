@@ -1,43 +1,28 @@
-import { useEffect, useState } from "react";
-import { getHealth } from "./services/auth";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+
+import Login from "./pages/login";
+import Register from "./pages/Register";
 
 function App() {
-  const [health, setHealth] = useState(null);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const checkBackend = async () => {
-      try {
-        const data = await getHealth();
-        setHealth(data);
-      } catch (error) {
-        setError(error.message);
-      }
-    };
-
-    checkBackend();
-  }, []);
-
   return (
-    <div>
-      <h1>DevMentor AI</h1>
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={<Navigate to="/login" replace />}
+        />
 
-      {health && (
-        <p>
-          {health.message}
-        </p>
-      )}
+        <Route
+          path="/login"
+          element={<Login/>}
+        />
 
-      {error && (
-        <p>
-          Backend connection failed: {error}
-        </p>
-      )}
-
-      {!health && !error && (
-        <p>Checking backend connection...</p>
-      )}
-    </div>
+        <Route
+          path="/register"
+          element={<Register/>}
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
