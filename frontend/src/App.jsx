@@ -2,6 +2,9 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import Login from "./pages/login";
 import Register from "./pages/Register";
+import AI from "./pages/AI";
+
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -14,13 +17,21 @@ function App() {
 
         <Route
           path="/login"
-          element={<Login/>}
+          element={<Login />}
         />
 
         <Route
           path="/register"
-          element={<Register/>}
+          element={<Register />}
         />
+
+        <Route element={<ProtectedRoute />}>
+          <Route
+            path="/ai"
+            element={<AI />}
+          />
+        </Route>
+        
       </Routes>
     </BrowserRouter>
   );
