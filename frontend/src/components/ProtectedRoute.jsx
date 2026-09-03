@@ -18,7 +18,7 @@ const ProtectedRoute = () => {
         return <Navigate to="/login" replace />;
     }
 
-    return <Outlet />;
+    return <Outlet />; // when user is isAuthenticated there in the app.js there is route in that outlet say render that nested(child compontent eg: <AI/>)
 };
 
 export default ProtectedRoute;
