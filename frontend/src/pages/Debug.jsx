@@ -1,8 +1,14 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { debugAI } from "../services/ai";
 import "./AI.css";
+import { useSharedContext } from "../context/SharedContext";
 
 function Debug() {
+
+    const { updateUserContext, updateDebugContext } = useSharedContext();
+    const navigate = useNavigate();
+
     const [code, setCode] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [language, setLanguage] = useState("javascript");
@@ -28,6 +34,13 @@ function Debug() {
             setError("");
             setDebugResult(null);
 
+            updateUserContext({
+                code: code.trim(),
+                language,
+                error: errorMessage.trim(),
+                problem: context.trim(),
+            });
+
             const response = await debugAI({
                 code: code.trim(),
                 error: errorMessage.trim(),
@@ -35,9 +48,18 @@ function Debug() {
                 context: context.trim(),
             });
 
-            setDebugResult(response.data);
+            const result = response.data;
+            setDebugResult(result);
+
+
+            updateDebugContext({
+                rootCause: result.rootCause || "",
+                solution: result.solution || "",
+                fixedCode: result.fixedCode || "",
+            });
 
         }
+        
         catch (err) {
             if (err.response?.status === 401) {
                 setError("Please login to use DevMentor AI.");
@@ -68,6 +90,7 @@ function Debug() {
 
     return (
         <div className="min-h-screen bg-slate-50 px-4 py-10">
+            <title>DevMentor AI - Debug Code and Find Root Causes with AI Assistance</title>
             <div className="mx-auto max-w-5xl">
 
                 {/* =========================
@@ -138,11 +161,8 @@ function Debug() {
                             }
                             disabled={loading}
                             placeholder={`Paste the error message here...
-
-Example:
-
-TypeError: Cannot read properties of undefined
-(reading 'name')`}
+                         Example:
+                              TypeError: Cannot read properties of undefined (reading 'name')`}
                             className="min-h-32 w-full resize-y rounded-lg
                             border border-slate-300 bg-slate-50 p-4
                             font-mono text-sm text-slate-900 outline-none
@@ -294,6 +314,20 @@ TypeError: Cannot read properties of undefined
                             disabled:opacity-60"
                         >
                             Clear
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => navigate("/ai")}
+                            disabled={loading}
+                            className="rounded-lg border border-indigo-200
+                            bg-indigo-50 px-6 py-3 font-semibold
+                            text-indigo-700 transition
+                            hover:bg-indigo-100
+                            disabled:cursor-not-allowed
+                            disabled:opacity-60"
+                        >
+                            Ask AI
                         </button>
                     </div>
                 </div>
@@ -469,6 +503,17 @@ TypeError: Cannot read properties of undefined
                     </div>
                 )}
             </div>
+
+            {/* for testing purposes only. */}
+
+            {/* <div>
+                <h3>Shared Context Debug</h3>
+
+                <pre>
+                    {JSON.stringify(sharedContext, null, 2)}
+                </pre>
+            </div> */}
+
         </div>
     );
 }

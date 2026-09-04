@@ -1,12 +1,13 @@
 const { buildAskPrompt, buildDebugPrompt } = require("./promptService");
 const { generateResponse } = require("./geminiService");
-const { debugResponseSchema} = require("../../validators/aiValidator");
+const { debugResponseSchema } = require("../../validators/aiValidator");
 
-const askAI = async (userPrompt) => {
-    const finalPrompt = buildAskPrompt(userPrompt);
-
+const askAI = async (userPrompt, context = {}) => {
+    const finalPrompt = buildAskPrompt(
+        userPrompt,
+        context
+    );
     const response = await generateResponse(finalPrompt);
-
     return response;
 };
 

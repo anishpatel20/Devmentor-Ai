@@ -1,18 +1,68 @@
-const buildAskPrompt = (userPrompt) => {
-    return `You are DevMentor AI, a developer assistant.
-            Provide accurate, practical, and understandable explanations.
-            If the question involves a technical decision, explain trade-offs rather than blindly agreeing.
-            User question:${userPrompt}`;
+const buildAskPrompt = (userPrompt, context = {}) => {
+  const {
+    code = "",
+    language = "",
+    error = "",
+    problem = "",
+    rootCause = "",
+    solution = "",
+    fixedCode = "",
+  } = context;
+
+  const contextSections = [];
+
+  if (language) {
+    contextSections.push(`Language:\n${language}`);
+  }
+
+  if (code) {
+    contextSections.push(`Current Code:\n${code}`);
+  }
+
+  if (error) {
+    contextSections.push(`Error:\n${error}`);
+  }
+
+  if (problem) {
+    contextSections.push(`Problem:\n${problem}`);
+  }
+
+  if (rootCause) {
+    contextSections.push(`Root Cause from Debug:\n${rootCause}`);
+  }
+
+  if (solution) {
+    contextSections.push(`Previous Solution from Debug:\n${solution}`);
+  }
+
+  if (fixedCode) {
+    contextSections.push(`Fixed Code from Debug:\n${fixedCode}`);
+  }
+
+  const sharedContext = contextSections.length ? `Relevant Shared Context: ${contextSections.join("\n\n")}` : `No relevant Shared Context is available.`;
+
+  return `You are DevMentor AI, a developer assistant.
+Provide accurate, practical, and understandable explanations.
+If the question involves a technical decision, explain trade-offs rather than blindly agreeing.
+The Shared Context below represents information from the user's current development task.
+Treat Shared Context as supporting information, not absolute truth.
+Do not assume AI-generated root causes or solutions are guaranteed to be correct.
+
+User question:
+${userPrompt}
+${sharedContext}`;
 };
 
 
+
+
 const buildDebugPrompt = ({
-    code,
-    error,
-    language = "Not specified",
-    context = "",
+  code,
+  error,
+  language = "Not specified",
+  context = "",
 }) => {
-    return `
+  return `
 You are DevMentor AI's debugging mentor.
 
 Your goal is not only to provide corrected code.
@@ -103,6 +153,6 @@ ${context || "No additional context provided."}
 };
 
 module.exports = {
-    buildAskPrompt,
-    buildDebugPrompt,
+  buildAskPrompt,
+  buildDebugPrompt,
 };
