@@ -26,7 +26,17 @@ const generateResponse = async (prompt) => {
             status: error.status,
         });
 
-        throw new Error("AI provider request failed");
+        if (error.status === 503) {
+            const providerError = new Error(
+                "AI service is temporarily unavailable. Please try again in a moment."
+            );
+            providerError.status = 503;
+            throw providerError;
+        }
+
+        const providerError = new Error("AI provider request failed");
+        providerError.status = error.status || 500;
+        throw providerError;
     }
 };
 

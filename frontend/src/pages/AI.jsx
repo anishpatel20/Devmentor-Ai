@@ -2,9 +2,14 @@ import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { askAI } from "../services/ai";
+import { useSharedContext } from "../context/SharedContext";
 import "./AI.css";
 
 function AI() {
+
+    const { context: sharedContext } = useSharedContext();
+    console.log("[AI.jsx mount] sharedContext:", sharedContext);
+
     const [prompt, setPrompt] = useState("");
     const [response, setResponse] = useState("");
     const [loading, setLoading] = useState(false);
@@ -21,7 +26,34 @@ function AI() {
             setError("");
             setResponse("");
 
-            const data = await askAI(prompt.trim());
+
+            // Only send context that is relevant to the current AI request.
+            // We intentionally avoid sending the entire application state or
+            // previous conversation history to Gemini.
+            // This keeps prompts focused, reduces token usage, and prevents
+            // unrelated information from influencing the AI response.
+
+            //mtlb user ne debug page pr jo task or question solve karha h uska context hum ASK mode mai bhej rhe h taki AI ko pata ho ki user ne kya kaam kiya h aur uske basis pr wo answer de sake.
+            const relevantContext = {
+                code: sharedContext.code,
+                language: sharedContext.language,
+                error: sharedContext.error,
+                problem: sharedContext.problem,
+                rootCause: sharedContext.rootCause,
+                solution: sharedContext.solution,
+                fixedCode: sharedContext.fixedCode,
+            };
+
+            // Ask AI receives the user's new question together with relevant
+            // information from the current development task.
+            // This enables cross-mode understanding, for example:
+            // Debug → Ask AI.
+
+            const data = await askAI(
+                prompt.trim(),
+                relevantContext
+            );
+
 
             setResponse(data.response);
         } catch (error) {
@@ -40,7 +72,9 @@ function AI() {
     };
 
     return (
+
         <div className="min-h-screen bg-slate-50 px-4 py-10">
+            <title>DevMentor AI - Ask Questions and Debug Code with AI Assistance</title>
             <div className="mx-auto max-w-4xl">
 
                 <div className="mb-6">
