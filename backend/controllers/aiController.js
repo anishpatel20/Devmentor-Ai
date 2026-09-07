@@ -1,5 +1,5 @@
-const { askAI, debugAI } = require("../services/ai/aiService");
-const { debugRequestSchema } = require("../validators/aiValidator");
+const { askAI, debugAI, explainAI } = require("../services/ai/aiService");
+const { debugRequestSchema,explainRequestSchema } = require("../validators/aiValidator");
 
 const MAX_PROMPT_LENGTH = 4000;
 
@@ -8,8 +8,8 @@ const askAIController = async (req, res, next) => {
         const { prompt, context = {} } = req.body;
 
         console.log("context", context); //testing
-        
-        if(!context){
+
+        if (!context) {
             console.log("context is null or undefined");
         }
 
@@ -127,7 +127,33 @@ const debug = async (req, res, next) => {
     }
 };
 
+const explain = async (req, res, next) => {
+    try {
+        const { error: validationError, value } = explainRequestSchema.validate(req.body, { abortEarly: false,});
+
+        if (validationError) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid explain request",
+                errors: validationError.details.map(
+                    (detail) => detail.message
+                ),
+            });
+        }
+
+        const response = await explainAI(value);
+
+        return res.status(200).json({
+            success: true,
+            response,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     askAIController,
     debug,
+    explain,
 };

@@ -33,7 +33,33 @@ const debugResponseSchema = Joi.object({
     .required(),
 });
 
+
+const explainRequestSchema = Joi.object({
+  code: Joi.string().trim().min(1).max(20000).required(),
+
+  language: Joi.string()
+    .trim()
+    .max(50)
+    .allow("")
+    .default(""),
+
+  question: Joi.string()
+    .trim()
+    .max(1000)
+    .allow("")
+    .default(""),
+
+  context: Joi.object({
+    problem: Joi.string().trim().max(4000).allow("").default(""),
+    rootCause: Joi.string().trim().max(4000).allow("").default(""),
+    solution: Joi.string().trim().max(4000).allow("").default(""),
+    fixedCode: Joi.string().trim().max(4000).allow("").default(""),
+  })
+    .default({}),
+});
+
 module.exports = {
-    debugResponseSchema,
-    debugRequestSchema,
+  debugResponseSchema,
+  debugRequestSchema,
+  explainRequestSchema,
 };

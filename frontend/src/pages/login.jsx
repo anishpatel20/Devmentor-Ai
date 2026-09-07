@@ -31,7 +31,7 @@ function Login() {
 
         try {
             await login(formData);
-            navigate("/dashboard");
+            navigate("/ai");
         } catch (error) {
             const message =
                 error.response?.data?.message ||

@@ -4,6 +4,7 @@ import Login from "./pages/login";
 import Register from "./pages/Register";
 import AI from "./pages/AI";
 import Debug from "./pages/Debug";
+import Explain from "./pages/Explain";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -34,6 +35,8 @@ function App() {
         </Route>
 
         <Route path="/ai/debug" element={<Debug />} />
+
+        <Route path="/ai/explain" element={<Explain />} />
 
 
 

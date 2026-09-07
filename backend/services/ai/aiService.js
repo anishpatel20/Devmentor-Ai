@@ -1,4 +1,4 @@
-const { buildAskPrompt, buildDebugPrompt } = require("./promptService");
+const { buildAskPrompt, buildDebugPrompt, buildExplainPrompt } = require("./promptService");
 const { generateResponse } = require("./geminiService");
 const { debugResponseSchema } = require("../../validators/aiValidator");
 
@@ -47,7 +47,27 @@ const debugAI = async ({
 };
 
 
+const explainAI = async ({
+    code,
+    language = "Not specified",
+    question = "",
+    context = {},
+}) => {
+    const prompt = buildExplainPrompt({
+        code,
+        language,
+        question,
+        context,
+    });
+
+    const response = await generateResponse(prompt);
+
+    return response;
+};
+
+
 module.exports = {
     askAI,
     debugAI,
+    explainAI,
 };
