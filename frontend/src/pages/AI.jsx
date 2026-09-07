@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { askAI } from "../services/ai";
@@ -86,6 +87,21 @@ function AI() {
                         Ask questions, debug code, and learn programming
                         concepts with AI.
                     </p>
+
+                    <div className="mt-4 flex flex-wrap gap-3">
+                        <Link
+                            to="/ai/debug"
+                            className="rounded-lg bg-slate-800 px-4 py-2 font-semibold text-white transition hover:bg-slate-900"
+                        >
+                            Debug Code
+                        </Link>
+                        <Link
+                            to="/ai/explain"
+                            className="rounded-lg bg-emerald-600 px-4 py-2 font-semibold text-white transition hover:bg-emerald-700"
+                        >
+                            Explain Code
+                        </Link>
+                    </div>
                 </div>
 
                 <div className="rounded-xl bg-white p-6 shadow-lg">
@@ -108,6 +124,7 @@ function AI() {
                         onClick={handleAskAI}
                         disabled={loading}
                     >
+                        
                         {loading ? "Thinking..." : "Ask AI"}
                     </button>
 

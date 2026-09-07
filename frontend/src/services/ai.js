@@ -11,8 +11,6 @@ export const askAI = async (prompt, context) => {
 
 
 
-
-
 export const debugAI = async ({
     code,
     error,
@@ -23,6 +21,23 @@ export const debugAI = async ({
         code,
         error,
         language,
+        context,
+    });
+
+    return response.data;
+};
+
+
+export const explainAI = async ({
+    code,
+    language,
+    question,
+    context,
+}) => {
+    const response = await api.post("/api/ai/explain", {
+        code,
+        language,
+        question,
         context,
     });
 
