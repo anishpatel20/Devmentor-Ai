@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import AI from "./pages/AI";
 import Debug from "./pages/Debug";
 import Explain from "./pages/Explain";
+import Home from "./pages/Home";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -12,10 +13,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/"
-          element={<Navigate to="/login" replace />}
-        />
+
+        <Route path="/" element={<Home />} />
 
         <Route
           path="/login"
