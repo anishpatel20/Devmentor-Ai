@@ -1,5 +1,5 @@
-const { askAI, debugAI, explainAI } = require("../services/ai/aiService");
-const { debugRequestSchema,explainRequestSchema } = require("../validators/aiValidator");
+const { askAI, debugAI, explainAI, reviewAI, killCriticAI } = require("../services/ai/aiService");
+const { debugRequestSchema, explainRequestSchema, reviewRequestSchema } = require("../validators/aiValidator");
 
 const MAX_PROMPT_LENGTH = 4000;
 
@@ -129,7 +129,7 @@ const debug = async (req, res, next) => {
 
 const explain = async (req, res, next) => {
     try {
-        const { error: validationError, value } = explainRequestSchema.validate(req.body, { abortEarly: false,});
+        const { error: validationError, value } = explainRequestSchema.validate(req.body, { abortEarly: false, });
 
         if (validationError) {
             return res.status(400).json({
@@ -152,8 +152,58 @@ const explain = async (req, res, next) => {
     }
 };
 
+
+const review = async (req, res, next) => {
+    try {
+        const { error, value } =
+            reviewRequestSchema.validate(req.body);
+
+        if (error) {
+            return res.status(400).json({
+                success: false,
+                message: error.details[0].message,
+            });
+        }
+
+        const {
+            code,
+            language,
+            requirements,
+            mode,
+            context,
+        } = value;
+
+        let response;
+
+        if (mode === "kill-critic") {
+            response = await killCriticAI({
+                code,
+                language,
+                requirements,
+                context,
+            });
+        } else {
+            response = await reviewAI({
+                code,
+                language,
+                requirements,
+                context,
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            response,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 module.exports = {
     askAIController,
     debug,
     explain,
+    review,
 };

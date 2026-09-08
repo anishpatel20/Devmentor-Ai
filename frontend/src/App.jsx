@@ -6,6 +6,8 @@ import AI from "./pages/AI";
 import Debug from "./pages/Debug";
 import Explain from "./pages/Explain";
 import Home from "./pages/Home";
+import NotFound from "./pages/notFound";
+import Review from "./pages/Review";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -31,12 +33,23 @@ function App() {
             path="/ai"
             element={<AI />}
           />
+
+          <Route
+            path="/ai/debug"
+            element={<Debug />}
+          />
+
+          <Route
+            path="/ai/explain"
+            element={<Explain />}
+          />
+          <Route
+            path="/ai/review"
+            element={<Review />}
+          />
         </Route>
 
-        <Route path="/ai/debug" element={<Debug />} />
-
-        <Route path="/ai/explain" element={<Explain />} />
-
+        <Route path="*" element={<NotFound />} />
 
 
       </Routes>
@@ -45,3 +58,4 @@ function App() {
 }
 
 export default App;
+      

@@ -11,14 +11,15 @@ const ai = new GoogleGenAI({
 const generateResponse = async (prompt) => {
     try {
         const response = await ai.models.generateContent({
-            model: "gemini-3.6-flash",
+            model: "gemini-3.7-flash",
             contents: prompt,
         });
 
         if (!response || !response.text) {
             throw new Error("Gemini returned an empty response");
         }
-
+        // console.log("Gemini API response:", response);
+        // console.log("Gemini API response text:", response.text);
         return response.text;
     } catch (error) {
         console.error("Gemini API error:", {

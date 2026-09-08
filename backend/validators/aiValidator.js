@@ -58,8 +58,167 @@ const explainRequestSchema = Joi.object({
     .default({}),
 });
 
+
+const reviewRequestSchema = Joi.object({
+  code: Joi.string()
+    .trim()
+    .min(1)
+    .max(50000)
+    .required(),
+
+  language: Joi.string()
+    .trim()
+    .lowercase()
+    .valid(
+      "javascript",
+      "typescript",
+      "python",
+      "java",
+      "c",
+      "cpp",
+      "csharp",
+      "go",
+      "rust",
+      "php",
+      "ruby",
+      "kotlin",
+      "swift",
+      "dart",
+      "sql"
+    )
+    .required(),
+
+  requirements: Joi.string()
+    .trim()
+    .max(5000)
+    .allow("")
+    .default(""),
+
+  mode: Joi.string()
+    .valid("normal", "kill-critic")
+    .default("normal"),
+
+  context: Joi.object({
+    code: Joi.string().trim().max(4000).allow("").default(""),
+    language: Joi.string().trim().max(100).allow("").default(""),
+    error: Joi.string().trim().max(4000).allow("").default(""),
+    problem: Joi.string().trim().max(4000).allow("").default(""),
+    rootCause: Joi.string().trim().max(4000).allow("").default(""),
+    solution: Joi.string().trim().max(4000).allow("").default(""),
+    fixedCode: Joi.string().trim().max(4000).allow("").default(""),
+  }).default({}),
+});
+
+
+const reviewResponseSchema = Joi.object({
+  overallAssessment: Joi.string().required(),
+
+  findings: Joi.array()
+    .items(
+      Joi.object({
+        severity: Joi.string()
+          .valid(
+            "Critical",
+            "High",
+            "Medium",
+            "Low",
+            "Suggestion"
+          )
+          .required(),
+
+        category: Joi.string()
+          .valid(
+            "Correctness",
+            "Security",
+            "Performance",
+            "Maintainability",
+            "Readability",
+            "Error Handling",
+            "Testing",
+            "Architecture"
+          )
+          .required(),
+
+        location: Joi.string()
+          .allow("")
+          .required(),
+
+        problem: Joi.string().required(),
+
+        whyItMatters: Joi.string().required(),
+
+        recommendation: Joi.string().required(),
+      })
+    )
+    .required(),
+
+  recommendedImprovements: Joi.array()
+    .items(Joi.string())
+    .required(),
+
+  finalVerdict: Joi.string().required(),
+});
+
+
+
+const killCriticResponseSchema = Joi.object({
+  overallAssessment: Joi.string().required(),
+
+  attackSurface: Joi.array()
+    .items(
+      Joi.object({
+        severity: Joi.string()
+          .valid(
+            "Critical",
+            "High",
+            "Medium",
+            "Low"
+          )
+          .required(),
+
+        category: Joi.string()
+          .valid(
+            "Correctness",
+            "Security",
+            "Performance",
+            "Maintainability",
+            "Architecture"
+          )
+          .required(),
+
+        location: Joi.string()
+          .allow("")
+          .required(),
+
+        weakness: Joi.string().required(),
+
+        attack: Joi.string().required(),
+
+        impact: Joi.string().required(),
+
+        defense: Joi.string().required(),
+      })
+    )
+    .required(),
+
+  edgeCases: Joi.array()
+    .items(Joi.string())
+    .required(),
+
+  interviewQuestions: Joi.array()
+    .items(Joi.string())
+    .required(),
+
+  finalVerdict: Joi.string().required(),
+});
+
+
+
 module.exports = {
   debugResponseSchema,
   debugRequestSchema,
   explainRequestSchema,
+  reviewRequestSchema,
+  reviewResponseSchema,
+  killCriticResponseSchema,
 };
