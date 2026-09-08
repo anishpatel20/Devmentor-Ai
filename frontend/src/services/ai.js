@@ -43,3 +43,25 @@ export const explainAI = async ({
 
     return response.data;
 };
+
+
+export const reviewAI = async ({
+    code,
+    language,
+    requirements,
+    mode,
+    context,
+}) => {
+    const response = await api.post("/api/ai/review", {
+        code,
+        language,
+        requirements,
+        mode,
+        context,
+    });
+    
+
+    console.log("Review AI response:", response); // Log the response for debugging
+
+    return response.data;
+};
