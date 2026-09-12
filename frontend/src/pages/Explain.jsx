@@ -3,9 +3,10 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { explainAI } from "../services/ai";
 import { useSharedContext } from "../context/SharedContext";
+import ModeNavigation from "../components/ModeNavigation";
 
 const Explain = () => {
-    const { sharedContext } = useSharedContext();
+    const { context: sharedContext } = useSharedContext();
 
     const [code, setCode] = useState(sharedContext?.code || "");
     const [language, setLanguage] = useState(
@@ -16,7 +17,9 @@ const Explain = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    const handleExplain = async () => {
+    const handleExplain = async (event) => {
+        event?.preventDefault();
+
         if (!code.trim()) {
             setError("Please enter some code to explain.");
             return;
@@ -51,198 +54,261 @@ const Explain = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-950 text-white px-4 py-8">
-            <div className="max-w-7xl mx-auto">
+        <main className="min-h-screen bg-[#08090d] bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:40px_40px] text-white">
+            <ModeNavigation />
 
-                {/* Header */}
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold">
-                        Explain Code
+            <div className="mx-auto max-w-7xl px-6 py-10 lg:py-14">
+                <header className="mb-9 max-w-3xl">
+                    <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-sky-300/20 bg-sky-300/5 px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-sky-300">
+                        <span className="h-1.5 w-1.5 rounded-full bg-sky-300" />
+                        Learn the shape of your code
+                    </div>
+
+                    <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
+                        Explain your code
                     </h1>
 
-                    <p className="text-gray-400 mt-2">
-                        Understand how your code works, why it works,
-                        and the concepts behind it.
+                    <p className="mt-4 max-w-2xl text-base leading-7 text-slate-500">
+                        Turn unfamiliar code into a clear mental model. Ask about
+                        the flow, the concepts, or the decisions behind the
+                        implementation.
                     </p>
-                </div>
+                </header>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid gap-6 lg:grid-cols-[minmax(340px,0.86fr)_minmax(0,1.14fr)]">
+                    {/* Source Section */}
+                    <section className="h-fit rounded-xl border border-white/10 bg-[#0d0f13] p-6 shadow-2xl sm:p-7">
+                        <div className="mb-6 flex items-start justify-between gap-4">
+                            <div>
+                                <p className="text-xs font-medium uppercase tracking-[0.16em] text-sky-300">
+                                    01 / Source
+                                </p>
 
-                    {/* Input Section */}
-                    <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+                                <h2 className="mt-2 text-xl font-semibold">
+                                    What should I unpack?
+                                </h2>
+                            </div>
 
-                        <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-lg font-semibold">
-                                Your Code
-                            </h2>
+                            <span className="rounded-md border border-white/10 px-2 py-1 text-[10px] text-slate-600">
+                                EXPLAIN
+                            </span>
+                        </div>
 
-                            {sharedContext?.code && (
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setCode(sharedContext.code)
+                        <form onSubmit={handleExplain} className="space-y-5">
+                            {/* Language */}
+                            <div>
+                                <div className="mb-2 flex items-center justify-between">
+                                    <label
+                                        htmlFor="explain-language"
+                                        className="text-sm font-medium text-slate-300"
+                                    >
+                                        Language
+                                    </label>
+
+                                    {sharedContext?.code && (
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                setCode(sharedContext.code)
+                                            }
+                                            disabled={loading}
+                                            className="text-xs text-sky-300 transition hover:text-sky-200 disabled:opacity-40"
+                                        >
+                                            Use shared code
+                                        </button>
+                                    )}
+                                </div>
+
+                                <select
+                                    id="explain-language"
+                                    value={language}
+                                    onChange={(event) =>
+                                        setLanguage(event.target.value)
                                     }
-                                    className="text-sm text-blue-400 hover:text-blue-300"
+                                    disabled={loading}
+                                    className="w-full rounded-lg border border-white/10 bg-[#08090d] px-3.5 py-3 text-sm text-white outline-none focus:border-sky-300/60 focus:ring-2 focus:ring-sky-300/10 disabled:opacity-60"
                                 >
-                                    Use shared code
-                                </button>
+                                    <option value="javascript">
+                                        JavaScript
+                                    </option>
+                                    <option value="typescript">
+                                        TypeScript
+                                    </option>
+                                    <option value="python">Python</option>
+                                    <option value="java">Java</option>
+                                    <option value="cpp">C++</option>
+                                    <option value="csharp">C#</option>
+                                    <option value="go">Go</option>
+                                    <option value="rust">Rust</option>
+                                    <option value="php">PHP</option>
+                                    <option value="ruby">Ruby</option>
+                                </select>
+                            </div>
+
+                            {/* Code */}
+                            <div>
+                                <div className="mb-2 flex items-center justify-between">
+                                    <label
+                                        htmlFor="explain-code"
+                                        className="text-sm font-medium text-slate-300"
+                                    >
+                                        Your code
+                                    </label>
+
+                                    <span className="text-[11px] text-slate-600">
+                                        {code.length}/20000
+                                    </span>
+                                </div>
+
+                                <textarea
+                                    id="explain-code"
+                                    value={code}
+                                    onChange={(event) =>
+                                        setCode(event.target.value)
+                                    }
+                                    disabled={loading}
+                                    maxLength={20000}
+                                    rows={13}
+                                    placeholder="Paste the code you want to understand..."
+                                    className="w-full resize-y rounded-lg border border-white/10 bg-[#08090d] px-4 py-3.5 font-mono text-xs leading-6 text-white outline-none transition placeholder:text-slate-700 focus:border-sky-300/60 focus:ring-2 focus:ring-sky-300/10 disabled:opacity-60"
+                                />
+                            </div>
+
+                            {/* Question */}
+                            <div>
+                                <div className="mb-2 flex items-center justify-between">
+                                    <label
+                                        htmlFor="explain-question"
+                                        className="text-sm font-medium text-slate-300"
+                                    >
+                                        What do you want to understand?
+                                    </label>
+
+                                    <span className="text-[11px] text-slate-600">
+                                        {question.length}/1000
+                                    </span>
+                                </div>
+
+                                <textarea
+                                    id="explain-question"
+                                    value={question}
+                                    onChange={(event) =>
+                                        setQuestion(event.target.value)
+                                    }
+                                    disabled={loading}
+                                    maxLength={1000}
+                                    rows={4}
+                                    placeholder="Example: Why is async/await used here?"
+                                    className="w-full resize-y rounded-lg border border-white/10 bg-[#08090d] px-4 py-3.5 text-sm leading-6 text-white outline-none transition placeholder:text-slate-700 focus:border-sky-300/60 focus:ring-2 focus:ring-sky-300/10 disabled:opacity-60"
+                                />
+                            </div>
+
+                            {/* Shared Context */}
+                            {sharedContext?.problem && (
+                                <div className="rounded-lg border border-sky-300/10 bg-sky-300/5 px-3 py-2.5 text-xs text-slate-400">
+                                    <span className="text-sky-300">
+                                        Context attached:
+                                    </span>{" "}
+                                    current debugging session
+                                </div>
+                            )}
+
+                            {/* Error */}
+                            {error && (
+                                <p
+                                    role="alert"
+                                    className="rounded-lg border border-red-400/20 bg-red-400/5 px-3 py-2.5 text-sm leading-5 text-red-300"
+                                >
+                                    {error}
+                                </p>
+                            )}
+
+                            {/* Submit Button */}
+                            <button
+                                type="submit"
+                                disabled={!code.trim() || loading}
+                                className="flex w-full items-center justify-center gap-2 rounded-md bg-white px-4 py-3 text-sm font-semibold text-black transition hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-40"
+                            >
+                                {loading
+                                    ? "Building an explanation..."
+                                    : "Explain this code"}
+
+                                {!loading && (
+                                    <span aria-hidden="true">-&gt;</span>
+                                )}
+                            </button>
+                        </form>
+                    </section>
+
+                    {/* Response Section */}
+                    <section className="min-h-[620px] rounded-xl border border-white/10 bg-[#0d0f13] shadow-2xl">
+                        <div className="flex items-center justify-between border-b border-white/5 px-6 py-5 sm:px-7">
+                            <div>
+                                <p className="text-xs font-medium uppercase tracking-[0.16em] text-sky-300">
+                                    02 / Mental model
+                                </p>
+
+                                <h2 className="mt-2 text-xl font-semibold">
+                                    The code, made legible
+                                </h2>
+                            </div>
+
+                            {response && (
+                                <span className="rounded-full border border-sky-300/20 bg-sky-300/5 px-3 py-1 text-[11px] text-sky-300">
+                                    Explanation ready
+                                </span>
                             )}
                         </div>
 
-                        {/* Language */}
-                        <label className="block text-sm text-gray-300 mb-2">
-                            Language
-                        </label>
+                        <div className="p-6 sm:p-7">
+                            {/* Loading State */}
+                            {loading && (
+                                <div className="flex min-h-[510px] flex-col items-center justify-center text-center">
+                                    <div className="mb-5 h-8 w-8 animate-spin rounded-full border-2 border-white/10 border-t-sky-300" />
 
-                        <select
-                            value={language}
-                            onChange={(e) =>
-                                setLanguage(e.target.value)
-                            }
-                            className="w-full mb-5 rounded-lg bg-gray-800 border border-gray-700 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            <option value="javascript">
-                                JavaScript
-                            </option>
+                                    <p className="text-sm text-slate-300">
+                                        Reading the code...
+                                    </p>
 
-                            <option value="typescript">
-                                TypeScript
-                            </option>
-
-                            <option value="python">
-                                Python
-                            </option>
-
-                            <option value="java">
-                                Java
-                            </option>
-
-                            <option value="cpp">
-                                C++
-                            </option>
-
-                            <option value="csharp">
-                                C#
-                            </option>
-
-                            <option value="go">
-                                Go
-                            </option>
-
-                            <option value="rust">
-                                Rust
-                            </option>
-
-                            <option value="php">
-                                PHP
-                            </option>
-
-                            <option value="ruby">
-                                Ruby
-                            </option>
-                        </select>
-
-                        {/* Code */}
-                        <label className="block text-sm text-gray-300 mb-2">
-                            Code
-                        </label>
-
-                        <textarea
-                            value={code}
-                            onChange={(e) => setCode(e.target.value)}
-                            placeholder="Paste your code here..."
-                            rows={16}
-                            maxLength={20000}
-                            className="w-full rounded-lg bg-gray-950 border border-gray-700 px-4 py-3 text-sm font-mono text-gray-100 placeholder-gray-600 resize-y focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-
-                        <div className="text-right text-xs text-gray-500 mt-1">
-                            {code.length}/20000
-                        </div>
-
-                        {/* Question */}
-                        <label className="block text-sm text-gray-300 mt-5 mb-2">
-                            What do you want to understand?
-                        </label>
-
-                        <textarea
-                            value={question}
-                            onChange={(e) =>
-                                setQuestion(e.target.value)
-                            }
-                            placeholder="Example: Why is async/await used here?"
-                            rows={3}
-                            maxLength={1000}
-                            className="w-full rounded-lg bg-gray-800 border border-gray-700 px-4 py-3 text-sm text-white placeholder-gray-500 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-
-                        <div className="text-right text-xs text-gray-500 mt-1">
-                            {question.length}/1000
-                        </div>
-
-                        {/* Error */}
-                        {error && (
-                            <div className="mt-4 rounded-lg border border-red-800 bg-red-950/40 px-4 py-3 text-sm text-red-300">
-                                {error}
-                            </div>
-                        )}
-
-                        {/* Button */}
-                        <button
-                            type="button"
-                            onClick={handleExplain}
-                            disabled={loading}
-                            className="w-full mt-5 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 disabled:cursor-not-allowed px-4 py-3 font-medium transition"
-                        >
-                            {loading
-                                ? "Explaining..."
-                                : "Explain Code"}
-                        </button>
-                    </div>
-
-                    {/* Response Section */}
-                    <div className="bg-gray-900 border border-gray-800 rounded-xl p-5 min-h-[500px]">
-
-                        <h2 className="text-lg font-semibold mb-5">
-                            Explanation
-                        </h2>
-
-                        {loading && (
-                            <div className="flex items-center justify-center min-h-[400px]">
-                                <div className="text-gray-400">
-                                    Analyzing your code...
+                                    <p className="mt-2 text-xs text-slate-600">
+                                        Connecting the implementation to the
+                                        concepts behind it.
+                                    </p>
                                 </div>
-                            </div>
-                        )}
+                            )}
 
-                        {!loading && !response && (
-                            <div className="flex items-center justify-center min-h-[400px] text-center">
-                                <div>
-                                    <p className="text-gray-500">
+                            {/* Empty State */}
+                            {!loading && !response && (
+                                <div className="flex min-h-[510px] flex-col items-center justify-center text-center">
+                                    <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full border border-sky-300/20 bg-sky-300/5 text-xl text-sky-300">
+                                        ?
+                                    </div>
+
+                                    <p className="text-sm font-medium text-slate-300">
                                         Your explanation will appear here.
                                     </p>
 
-                                    <p className="text-sm text-gray-600 mt-2">
-                                        Enter some code and click
-                                        "Explain Code".
+                                    <p className="mt-2 max-w-xs text-xs leading-5 text-slate-600">
+                                        Paste code and ask a specific question,
+                                        or let DevMentor walk through the whole
+                                        thing.
                                     </p>
                                 </div>
-                            </div>
-                        )}
+                            )}
 
-                        {!loading && response && (
-                            <div className="prose prose-invert max-w-none">
-                                <ReactMarkdown
-                                    remarkPlugins={[remarkGfm]}
-                                >
-                                    {response}
-                                </ReactMarkdown>
-                            </div>
-                        )}
-                    </div>
+                            {/* Response */}
+                            {!loading && response && (
+                                <article className="prose prose-invert max-w-none prose-headings:font-semibold prose-headings:text-white prose-p:text-sm prose-p:leading-7 prose-p:text-slate-300 prose-a:text-sky-300 prose-code:text-sky-200 prose-pre:border prose-pre:border-white/10 prose-pre:bg-[#08090d] prose-strong:text-white prose-li:text-slate-300">
+                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                        {response}
+                                    </ReactMarkdown>
+                                </article>
+                            )}
+                        </div>
+                    </section>
                 </div>
             </div>
-        </div>
+        </main>
     );
 };
 

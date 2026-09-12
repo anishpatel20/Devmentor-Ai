@@ -214,6 +214,65 @@ const killCriticResponseSchema = Joi.object({
 
 
 
+const killCriticRequestSchema = Joi.object({
+  input: Joi.string()
+    .trim()
+    .min(1)
+    .max(4000)
+    .required(),
+
+  context: Joi.object({
+    code: Joi.string().trim().max(4000).allow("").default(""),
+    language: Joi.string().trim().max(100).allow("").default(""),
+    error: Joi.string().trim().max(4000).allow("").default(""),
+    problem: Joi.string().trim().max(4000).allow("").default(""),
+    rootCause: Joi.string().trim().max(4000).allow("").default(""),
+    solution: Joi.string().trim().max(4000).allow("").default(""),
+    fixedCode: Joi.string().trim().max(4000).allow("").default(""),
+  }).default({}),
+});
+
+
+const killCriticModeResponseSchema = Joi.object({
+  verdict: Joi.string().required(),
+
+  whatIUnderstood: Joi.string().required(),
+
+  keyAssumptions: Joi.array()
+    .items(Joi.string())
+    .required(),
+
+  whatHoldsUp: Joi.array()
+    .items(Joi.string())
+    .required(),
+
+  whatImChallenging: Joi.array()
+    .items(Joi.string())
+    .required(),
+
+  risksAndTradeoffs: Joi.array()
+    .items(Joi.string())
+    .required(),
+
+  alternatives: Joi.array()
+    .items(Joi.string())
+    .required(),
+
+  recommendation: Joi.string().required(),
+
+  whatWouldChangeMyRecommendation: Joi.array()
+    .items(Joi.string())
+    .required(),
+
+  confidence: Joi.string()
+    .valid("High", "Medium", "Low")
+    .required(),
+});
+
+
+
+
+
 module.exports = {
   debugResponseSchema,
   debugRequestSchema,
@@ -221,4 +280,6 @@ module.exports = {
   reviewRequestSchema,
   reviewResponseSchema,
   killCriticResponseSchema,
+  killCriticRequestSchema,
+  killCriticModeResponseSchema,
 };

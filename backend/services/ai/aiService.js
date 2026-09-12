@@ -1,4 +1,4 @@
-const { buildAskPrompt, buildDebugPrompt, buildExplainPrompt, buildReviewPrompt, buildKillCriticPrompt } = require("./promptService");
+const { buildAskPrompt, buildDebugPrompt, buildExplainPrompt, buildReviewPrompt, buildKillCriticPrompt, buildKill_modeCriticPrompt } = require("./promptService");
 const { generateResponse } = require("./geminiService");
 const { debugResponseSchema, reviewResponseSchema, killCriticResponseSchema } = require("../../validators/aiValidator");
 
@@ -197,10 +197,27 @@ const killCriticAI = async ({
 };
 
 
+
+const killCriticAI_mode = async ({ input, context = {} }) => {
+    try {
+        const prompt = buildKill_modeCriticPrompt({
+            input,
+            context,
+        });
+
+        const response = await generateResponse(prompt);
+
+        return response;
+    } catch (error) {
+        throw error;
+    }
+};
+
 module.exports = {
     askAI,
     debugAI,
     explainAI,
     reviewAI,
     killCriticAI,
+    killCriticAI_mode,
 };
