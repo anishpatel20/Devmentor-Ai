@@ -1,11 +1,12 @@
 import { useState } from "react";
+import ModeNavigation from "../components/ModeNavigation";
 import { reviewAI } from "../services/ai";
 import { useSharedContext } from "../context/SharedContext";
-import NormalReviewResults  from "../components/NormalReviewResults";
+import NormalReviewResults from "../components/NormalReviewResults";
 import KillCriticResults from "../components/KillCriticResults";
 
 const Review = () => {
-    const { sharedContext } = useSharedContext();
+    const { context: sharedContext } = useSharedContext();
 
     const [code, setCode] = useState(
         sharedContext?.code || ""
@@ -70,52 +71,45 @@ const Review = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-950 text-white px-4 py-8">
-            <div className="max-w-7xl mx-auto">
+        <main className="min-h-screen bg-[#08090d] bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:40px_40px] text-white">
+            <ModeNavigation />
 
-                {/* Header */}
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold">
-                        Code Review
-                    </h1>
-
-                    <p className="text-gray-400 mt-2">
-                        Evaluate your code for correctness, security,
-                        performance, maintainability, and other risks.
+            <div className="mx-auto max-w-7xl px-6 py-10 lg:py-14">
+                <header className="mb-9 max-w-3xl">
+                    <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-300/20 bg-blue-300/5 px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-blue-300">
+                        <span className="h-1.5 w-1.5 rounded-full bg-blue-300" /> Code quality signal
+                    </div>
+                    <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">Review your code</h1>
+                    <p className="mt-4 max-w-2xl text-base leading-7 text-slate-500">
+                        Get practical feedback on correctness, security, performance, and maintainability before the code ships.
                     </p>
-                </div>
+                </header>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-                    {/* Input Section */}
+                <div className="grid gap-6 lg:grid-cols-[minmax(320px,0.82fr)_minmax(0,1.18fr)]">
                     <form
-                        onSubmit={(e) => {
-                            e.preventDefault();
+                        onSubmit={(event) => {
+                            event.preventDefault();
                             handleReview();
                         }}
-                        className="bg-gray-900 border border-gray-800 rounded-xl p-5"
+                        className="h-fit rounded-xl border border-white/10 bg-[#0d0f13] p-6 shadow-2xl sm:p-7"
                     >
+                        <div className="mb-6 flex items-start justify-between gap-4">
+                            <div>
+                                <p className="text-xs font-medium uppercase tracking-[0.16em] text-blue-300">01 / Inspect</p>
+                                <h2 className="mt-2 text-xl font-semibold">Set your review lens</h2>
+                            </div>
+                            <span className="rounded-md border border-white/10 px-2 py-1 text-[10px] text-slate-600">REVIEW</span>
+                        </div>
 
-                        <h2 className="text-lg font-semibold mb-5">
-                            Review Your Code
-                        </h2>
-
-                        {/* Review Mode */}
                         <fieldset className="mb-5">
-                            <legend className="mb-2 block text-sm text-gray-300">
-                                Review mode
-                            </legend>
-
-                            <div className="grid grid-cols-2 gap-2 rounded-lg border border-gray-700 bg-gray-950 p-1">
+                            <legend className="mb-2 block text-sm font-medium text-slate-300">Review mode</legend>
+                            <div className="grid grid-cols-2 gap-2 rounded-lg border border-white/10 bg-[#08090d] p-1">
                                 <button
                                     type="button"
                                     onClick={() => setMode("normal")}
                                     disabled={loading}
                                     aria-pressed={mode === "normal"}
-                                    className={`rounded-md px-3 py-2 text-sm font-medium transition ${mode === "normal"
-                                        ? "bg-blue-600 text-white shadow-sm"
-                                        : "text-gray-400 hover:bg-gray-800 hover:text-white"
-                                        }`}
+                                    className={`rounded-md px-3 py-2.5 text-sm font-medium transition ${mode === "normal" ? "bg-blue-300 text-[#08090d]" : "text-slate-500 hover:bg-white/5 hover:text-white"}`}
                                 >
                                     Normal review
                                 </button>
@@ -124,34 +118,23 @@ const Review = () => {
                                     onClick={() => setMode("kill-critic")}
                                     disabled={loading}
                                     aria-pressed={mode === "kill-critic"}
-                                    className={`rounded-md px-3 py-2 text-sm font-medium transition ${mode === "kill-critic"
-                                        ? "bg-red-600 text-white shadow-sm"
-                                        : "text-gray-400 hover:bg-gray-800 hover:text-white"
-                                        }`}
+                                    className={`rounded-md px-3 py-2.5 text-sm font-medium transition ${mode === "kill-critic" ? "bg-red-300 text-[#08090d]" : "text-slate-500 hover:bg-white/5 hover:text-white"}`}
                                 >
-                                    Kill Critic
+                                    KillCritic
                                 </button>
                             </div>
-
-                            <p className="mt-2 text-xs text-gray-500">
-                                {mode === "normal"
-                                    ? "Balanced feedback on quality, risks, and improvements."
-                                    : "An aggressive pass focused on attack surfaces and edge cases."}
+                            <p className="mt-2 text-xs leading-5 text-slate-600">
+                                {mode === "normal" ? "Balanced feedback on quality, risks, and improvements." : "An adversarial pass focused on attack surfaces and edge cases."}
                             </p>
                         </fieldset>
 
-                        {/* Language */}
-                        <label className="block text-sm text-gray-300 mb-2">
-                            Language
-                        </label>
-
+                        <label htmlFor="review-language" className="mb-2 block text-sm font-medium text-slate-300">Language</label>
                         <select
+                            id="review-language"
                             value={language}
-                            onChange={(e) =>
-                                setLanguage(e.target.value)
-                            }
+                            onChange={(event) => setLanguage(event.target.value)}
                             disabled={loading}
-                            className="w-full mb-5 rounded-lg bg-gray-800 border border-gray-700 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="mb-5 w-full rounded-lg border border-white/10 bg-[#08090d] px-3 py-3 text-sm text-white outline-none focus:border-blue-300/60 focus:ring-2 focus:ring-blue-300/10"
                         >
                             <option value="javascript">
                                 JavaScript
@@ -214,118 +197,103 @@ const Review = () => {
                             </option>
                         </select>
 
-                        {/* Code */}
-                        <label className="block text-sm text-gray-300 mb-2">
-                            Code
-                        </label>
-
+                        <label htmlFor="review-code" className="mb-2 block text-sm font-medium text-slate-300">Code</label>
                         <textarea
+                            id="review-code"
                             value={code}
-                            onChange={(e) =>
-                                setCode(e.target.value)
-                            }
+                            onChange={(event) => setCode(event.target.value)}
                             disabled={loading}
                             placeholder="Paste the code you want to review..."
                             rows={8}
                             maxLength={50000}
-                            className="w-full rounded-lg bg-gray-950 border border-gray-700 px-4 py-3 text-sm font-mono text-gray-100 placeholder-gray-600 resize-y focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full resize-y rounded-lg border border-white/10 bg-[#08090d] px-4 py-3.5 font-mono text-sm leading-6 text-white outline-none transition placeholder:text-slate-700 focus:border-blue-300/60 focus:ring-2 focus:ring-blue-300/10 disabled:opacity-60"
                         />
 
-                        <div className="text-right text-xs text-gray-500 mt-1">
+                        <div className="mt-2 text-right text-[11px] text-slate-600">
                             {code.length}/50000
                         </div>
 
-                        {/* Requirements */}
-                        <label className="block text-sm text-gray-300 mt-5 mb-2">
-                            Requirements
-
-                            <span className="ml-2 text-gray-500">
-                                Optional
-                            </span>
+                        <label htmlFor="review-requirements" className="mb-2 mt-5 block text-sm font-medium text-slate-300">
+                            Requirements <span className="ml-1 text-xs font-normal text-slate-600">optional</span>
                         </label>
 
                         <textarea
+                            id="review-requirements"
                             value={requirements}
-                            onChange={(e) =>
-                                setRequirements(e.target.value)
-                            }
+                            onChange={(event) => setRequirements(event.target.value)}
                             disabled={loading}
                             placeholder="Example: This API should be secure and handle high traffic."
                             rows={4}
                             maxLength={5000}
-                            className="w-full rounded-lg bg-gray-800 border border-gray-700 px-4 py-3 text-sm text-white placeholder-gray-500 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full resize-none rounded-lg border border-white/10 bg-[#08090d] px-4 py-3.5 text-sm leading-6 text-white outline-none transition placeholder:text-slate-700 focus:border-blue-300/60 focus:ring-2 focus:ring-blue-300/10 disabled:opacity-60"
                         />
 
-                        <div className="text-right text-xs text-gray-500 mt-1">
+                        <div className="mt-2 text-right text-[11px] text-slate-600">
                             {requirements.length}/5000
                         </div>
 
-                        {/* Error */}
+                        {sharedContext?.code && (
+                            <div className="mt-5 rounded-lg border border-blue-300/10 bg-blue-300/5 px-3 py-2.5 text-xs text-slate-400">
+                                <span className="text-blue-300">Context attached:</span> current debugging session
+                            </div>
+                        )}
+
                         {error && (
-                            <div className="mt-4 rounded-lg border border-red-800 bg-red-950/40 px-4 py-3 text-sm text-red-300">
+                            <div role="alert" className="mt-5 rounded-lg border border-red-400/20 bg-red-400/5 px-4 py-3 text-sm leading-5 text-red-300">
                                 {error}
                             </div>
                         )}
 
-                        {/* Button */}
                         <button
                             type="submit"
-                            disabled={loading}
-                            className="w-full mt-5 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 disabled:cursor-not-allowed px-4 py-3 font-medium transition"
+                            disabled={loading || !code.trim()}
+                            className="mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-white px-4 py-3 text-sm font-semibold text-black transition hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-40"
                         >
-                            {loading
-                                ? "Reviewing..."
-                                : "Review Code"}
+                            {loading ? "Reviewing your code..." : "Review this code"}
+                            {!loading && <span aria-hidden="true">-&gt;</span>}
                         </button>
-
                     </form>
 
-                    {/* Result Section */}
-                    <div className="bg-gray-900 border border-gray-800 rounded-xl p-5 min-h-[500px]">
+                    <section className="min-h-[520px] rounded-xl border border-white/10 bg-[#0d0f13] shadow-2xl">
+                        <div className="flex items-center justify-between border-b border-white/5 px-6 py-5 sm:px-7">
+                            <div>
+                                <p className="text-xs font-medium uppercase tracking-[0.16em] text-blue-300">02 / Findings</p>
+                                <h2 className="mt-2 text-xl font-semibold">What the reviewer sees</h2>
+                            </div>
+                            {reviewResult && <span className="rounded-full border border-blue-300/20 bg-blue-300/5 px-3 py-1 text-[11px] text-blue-300">Review complete</span>}
+                        </div>
 
-                        <h2 className="text-lg font-semibold mb-5">
-                            Review Results
-                        </h2>
-
-                        {/* Loading */}
+                        <div className="p-6 sm:p-7">
                         {loading && (
-                            <div className="flex items-center justify-center min-h-[400px]">
-                                <div className="text-gray-400">
-                                    Reviewing your code...
-                                </div>
+                            <div className="flex min-h-[410px] flex-col items-center justify-center text-center">
+                                <div className="mb-5 h-8 w-8 animate-spin rounded-full border-2 border-white/10 border-t-blue-300" />
+                                <p className="text-sm text-slate-300">Reading your code...</p>
+                                <p className="mt-2 text-xs text-slate-600">Checking the code against your selected review lens.</p>
                             </div>
                         )}
 
-                        {/* Empty State */}
                         {!loading && !reviewResult && (
-                            <div className="flex items-center justify-center min-h-[400px] text-center">
-                                <div>
-                                    <p className="text-gray-500">
-                                        Your code review will appear here.
-                                    </p>
-
-                                    <p className="text-sm text-gray-600 mt-2">
-                                        Enter your code and click
-                                        "Review Code".
-                                    </p>
-                                </div>
+                            <div className="flex min-h-[410px] flex-col items-center justify-center text-center">
+                                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full border border-blue-300/20 bg-blue-300/5 text-xl text-blue-300">{}</div>
+                                <p className="text-sm font-medium text-slate-300">Your review will appear here.</p>
+                                <p className="mt-2 max-w-xs text-xs leading-5 text-slate-600">Paste your code, choose a review lens, and let DevMentor surface the important details.</p>
                             </div>
                         )}
 
-                        {/* Review Result */}
                         {!loading && reviewResult && (
-                            mode === "kill-critic" ? (
-                                <KillCriticResults result={reviewResult} />
-                            ) : (
-                                <NormalReviewResults result={reviewResult} />
-                            )
+                            <div className="review-results text-slate-300">
+                                {mode === "kill-critic" ? (
+                                    <KillCriticResults result={reviewResult} />
+                                ) : (
+                                    <NormalReviewResults result={reviewResult} />
+                                )}
+                            </div>
                         )}
-
-                    </div>
+                        </div>
+                    </section>
                 </div>
-
             </div>
-        </div>
+        </main>
     );
 };
 

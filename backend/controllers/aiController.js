@@ -1,5 +1,5 @@
-const { askAI, debugAI, explainAI, reviewAI, killCriticAI } = require("../services/ai/aiService");
-const { debugRequestSchema, explainRequestSchema, reviewRequestSchema } = require("../validators/aiValidator");
+const { askAI, debugAI, explainAI, reviewAI, killCriticAI, killCriticAI_mode } = require("../services/ai/aiService");
+const { debugRequestSchema, explainRequestSchema, reviewRequestSchema, killCriticModeResponseSchema, killCriticRequestSchema } = require("../validators/aiValidator");
 
 const MAX_PROMPT_LENGTH = 4000;
 
@@ -201,9 +201,93 @@ const review = async (req, res, next) => {
 };
 
 
+const killCritic = async (req, res, next) => {
+    const { input, context = {} } = req.body;
+
+    const { error: requestError, value: requestValue } =
+        killCriticRequestSchema.validate({ input, context });
+
+    if (requestError) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid KillCritic request",
+            errors: requestError.details.map((detail) => detail.message),
+        });
+    }
+
+    let response;
+
+    try {
+        response = await killCriticAI_mode(requestValue);
+    } catch (error) {
+        next(error);
+        return;
+    }
+
+    let parsedResponse;
+
+    try {
+
+        let cleanedResponse = response;
+
+        if (typeof response === "string") {
+            cleanedResponse = response
+                .trim()
+                .replace(/^```json\s*/i, "")
+                .replace(/^```\s*/i, "")
+                .replace(/\s*```$/i, "")
+                .trim();
+
+            parsedResponse = JSON.parse(cleanedResponse);
+        }
+        else {
+            parsedResponse = response;
+        }
+    }
+
+    catch (error) {
+        console.error(
+            "Raw KillCritic AI response:",
+            response
+        );
+
+        throw new Error(
+            "AI returned invalid JSON for KillCritic"
+        );
+    }
+
+    const { error: responseError, value: responseValue } =
+        killCriticModeResponseSchema.validate(
+            parsedResponse,
+            {
+                abortEarly: false,
+            }
+        );
+
+    if (responseError) {
+        console.error(
+            "KillCritic response validation failed:",
+            responseError.details
+        );
+
+        throw new Error(
+            "AI returned an invalid KillCritic response"
+        );
+    }
+
+    return res.status(200).json({
+        success: true,
+        response: responseValue,
+    });
+};
+
+
+
+
 module.exports = {
     askAIController,
     debug,
     explain,
     review,
+    killCritic
 };

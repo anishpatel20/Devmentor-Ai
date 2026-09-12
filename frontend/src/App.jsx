@@ -8,6 +8,7 @@ import Explain from "./pages/Explain";
 import Home from "./pages/Home";
 import NotFound from "./pages/notFound";
 import Review from "./pages/Review";
+import KillCritic from "./pages/KillCritic";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -43,10 +44,17 @@ function App() {
             path="/ai/explain"
             element={<Explain />}
           />
+
           <Route
             path="/ai/review"
             element={<Review />}
           />
+
+          <Route
+            path="/ai/kill-critic"
+            element={<KillCritic />}
+          />
+
         </Route>
 
         <Route path="*" element={<NotFound />} />

@@ -45,6 +45,24 @@ export const explainAI = async ({
 };
 
 
+export const killCriticAI = async (input, context = {}) => {
+    if (!input || typeof input !== "string" || !input.trim()) {
+        throw new Error("Input is required.");
+    }
+
+    const response = await api.post("/api/ai/killcritic", {
+        input: input.trim(),
+        context,
+    });
+
+
+    // console.log("KillCritic AI response:", response); // Log the response for debugging
+
+    return response.data;
+};
+
+
+
 export const reviewAI = async ({
     code,
     language,
@@ -59,9 +77,9 @@ export const reviewAI = async ({
         mode,
         context,
     });
-    
 
-    console.log("Review AI response:", response); // Log the response for debugging
+
+    // console.log("Review AI response:", response); // Log the response for debugging
 
     return response.data;
 };
