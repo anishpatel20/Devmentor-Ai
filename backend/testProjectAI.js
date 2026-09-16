@@ -34,7 +34,7 @@ const test = async () => {
     } finally {
         await mongoose.disconnect();
         console.log("\nMongoDB disconnected.");
-    }
+     }
 };
 
 test();
