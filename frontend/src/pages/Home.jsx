@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import ProductPreview from "../components/home/ProductPreview";
+import { useAuth } from "../context/AuthContext";
 
 function Home() {
+  const { isAuthenticated, logout } = useAuth();
+
   return (
     <div className="min-h-screen bg-[#08090d] bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:40px_40px] text-white">
       {/* Navbar */}
@@ -31,9 +34,19 @@ function Home() {
 
           {/* Buttons */}
           <div className="flex items-center gap-3">
-            <Link to="/login" className="text-sm text-gray-300 hover:text-white">
-              Login
-            </Link>
+            {isAuthenticated ? (
+              <button
+                type="button"
+                onClick={logout}
+                className="text-sm bg-red-700 text-white hover:text-red-300 px-4 py-2 rounded-md transition"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link to="/login" className="text-sm bg-blue-600 text-white hover:text-blue-300 px-4 py-2 rounded-md transition">
+                Login
+              </Link>
+            )}
             <Link
               to="/register"
               className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-gray-200"
