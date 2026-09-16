@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import NotFound from "./pages/notFound";
 import Review from "./pages/Review";
 import KillCritic from "./pages/KillCritic";
+import Projects from "./pages/Projects";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -53,6 +54,14 @@ function App() {
           <Route
             path="/ai/kill-critic"
             element={<KillCritic />}
+          />
+
+
+          {/* // Projects route */}
+
+          <Route
+            path="/projects"
+            element={<Projects />}
           />
 
         </Route>
