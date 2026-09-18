@@ -20,12 +20,14 @@ const authRoutes = require("./routes/authRoutes");
 const aiRoutes = require("./routes/aiRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const documentRoutes = require("./routes/documentRoutes");
+const projectAIRoutes = require("./routes/projectAIRoutes");
 
 app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/projects", documentRoutes);
+app.use("/api/projects", projectAIRoutes);
 
 app.use(errorMiddleware);
 module.exports = app;
