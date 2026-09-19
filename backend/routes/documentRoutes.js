@@ -2,6 +2,7 @@ const express = require("express");
 
 const {
   uploadDocument,
+  getDocuments,
 } = require("../controllers/documentController");
 
 const authMiddleware = require("../middleware/authMiddleware");
@@ -14,6 +15,12 @@ router.post(
   authMiddleware,
   upload.single("file"),
   uploadDocument
+);
+
+router.get(
+  "/:projectId/documents",
+  authMiddleware,
+  getDocuments
 );
 
 module.exports = router;

@@ -74,7 +74,12 @@ IMPORTANT RULES:
   provided context, clearly say that the project documents
   do not contain enough information.
 
-- Always provide project sources when project context is used.
+- Answer with clean, direct prose. Use short headings or bullet
+    points only when they improve readability.
+
+- Do not add a Sources section, source numbers, chunk numbers,
+    scores, citations, or metadata to the answer. Sources are
+    returned separately by the application.
 
 PROJECT CONTEXT:
 ${context || "No relevant project information found."}

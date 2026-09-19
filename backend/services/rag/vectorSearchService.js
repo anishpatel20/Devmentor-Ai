@@ -10,7 +10,7 @@ const {
 const searchProjectChunks = async ({
     projectId,
     query,
-    limit = 5,
+    limit = 10,
     minScore = 0.7, //The minimum similarity score a retrieved chunk must have to be considered relevant enough to pass to the next RAG stage.
 }) => {
     if (!projectId) {

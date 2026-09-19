@@ -123,6 +123,49 @@ const uploadDocument = async (req, res) => {
 };
 
 
+const getDocuments = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+
+    // 1. Verify project ownership
+    const project = await Project.findOne({
+      _id: projectId,
+      userId: req.user.userId,
+    });
+
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: "Project not found",
+      });
+    }
+
+    // 2. Get documents belonging to this project
+    const documents = await Document.find({
+      projectId: project._id,
+      userId: req.user.userId,
+    })
+      .select(
+        "_id name originalName fileType fileSize processingStatus createdAt updatedAt"
+      )
+      .sort({ createdAt: -1 });
+
+    // 3. Return documents
+    return res.status(200).json({
+      success: true,
+      documents,
+    });
+  } catch (error) {
+    console.error("Get documents error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to load documents",
+    });
+  }
+};
+
 module.exports = {
   uploadDocument,
+  getDocuments,
 };
