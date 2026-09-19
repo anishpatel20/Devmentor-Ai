@@ -9,7 +9,9 @@ import Home from "./pages/Home";
 import NotFound from "./pages/notFound";
 import Review from "./pages/Review";
 import KillCritic from "./pages/KillCritic";
-import Projects from "./pages/Projects";
+import Project from "./pages/Projects";
+import ProjectDetails from "./pages/ProjectDetails";
+import Features from "./pages/Features";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -61,8 +63,19 @@ function App() {
 
           <Route
             path="/projects"
-            element={<Projects />}
+            element={<Project />}
           />
+
+          <Route
+            path="/projects/:projectId"
+            element={<ProjectDetails />}
+          />
+
+          <Route
+            path="/features"
+            element={<Features />}
+          />
+
 
         </Route>
 
@@ -75,4 +88,3 @@ function App() {
 }
 
 export default App;
-      

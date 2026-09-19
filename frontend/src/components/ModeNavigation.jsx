@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 
 const modes = [
+    ["Projects", "/projects"],
     ["Ask AI", "/ai"],
     ["Debug", "/ai/debug"],
     ["Explain", "/ai/explain"],
