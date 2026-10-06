@@ -8,8 +8,8 @@ const errorMiddleware = require("./middleware/errorMiddleware");
 app.use(
     cors({
         origin:[process.env.CLIENT_URL,
-            "https://devmentor-1dievh3bj-anishpatel5002-8893s-projects.vercel.app/",
-            "https://devmentor-ai-six.vercel.app/"
+            "https://devmentor-1dievh3bj-anishpatel5002-8893s-projects.vercel.app",
+            "https://devmentor-ai-six.vercel.app"
         ],
         credentials: true,
     })
