@@ -1,5 +1,11 @@
 const { buildAskPrompt, buildDebugPrompt, buildExplainPrompt, buildReviewPrompt, buildKillCriticPrompt, buildKill_modeCriticPrompt } = require("./promptService");
-const { generateResponse } = require("./geminiService");
+
+//gemini
+// const { generateResponse } = require("./geminiService");
+
+//openrouter
+const { generateResponse } = require("./openrouterService.js");
+
 const { debugResponseSchema, reviewResponseSchema, killCriticResponseSchema } = require("../../validators/aiValidator");
 
 //Project section in this RAG is implemented 
